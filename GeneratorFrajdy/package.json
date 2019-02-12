@@ -1,0 +1,30 @@
+{
+  "name": "cringedcoder.github.io",
+  "private": true,
+  "dependencies": {
+    "@kociolekt/syncdirs3": "^1.1.1",
+    "dotenv": "^6.2.0",
+    "handlebars": "^4.0.12",
+    "metalsmith": "^2.1.0",
+    "metalsmith-author": "^1.1.0",
+    "metalsmith-build-date": "^0.2.0",
+    "metalsmith-collections": "^0.9.0",
+    "metalsmith-date-formatter": "^1.0.2",
+    "metalsmith-define": "^2.0.1",
+    "metalsmith-drafts": "0.0.1",
+    "metalsmith-feed": "^0.3.0",
+    "metalsmith-gravatar": "^0.1.0",
+    "metalsmith-layouts": "^1.4.1",
+    "metalsmith-markdown": "^0.2.1",
+    "metalsmith-metallic": "^2.0.1",
+    "metalsmith-navigation": "^0.2.9",
+    "metalsmith-publish": "^0.1.5",
+    "metalsmith-robots": "^1.0.1",
+    "metalsmith-sitemap": "^1.2.0",
+    "mime-types": "^2.1.21",
+    "ncp": "^2.0.0",
+    "rimraf": "^2.6.1",
+    "s3fs": "^2.5.0",
+    "scandir": "^0.1.2"
+  }
+}
