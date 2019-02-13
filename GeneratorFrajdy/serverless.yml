@@ -20,10 +20,8 @@ service: GeneratorFrajdy # NOTE: update this with your service name
 provider:
   name: aws
   runtime: nodejs8.10
-
-# you can overwrite defaults here
+  region: eu-central-1
 #  stage: dev
-region: ${env:WORK_REGION}
 
 # you can add statements to the Lambda function's IAM Role here
 #  iamRoleStatements:
@@ -47,12 +45,13 @@ region: ${env:WORK_REGION}
 
 # you can add packaging information here
 package:
-#  include:
-#    - include-me.js
-#    - include-me-dir/**
   exclude:
     - build/**
     - _temp/**
+#  include:
+#    - include-me.js
+#    - include-me-dir/**
+
 
 #    - exclude-me.js
 #    - exclude-me-dir/**
