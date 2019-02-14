@@ -20,7 +20,8 @@ service: GeneratorFrajdy # NOTE: update this with your service name
 provider:
   name: aws
   runtime: nodejs8.10
-  region: eu-central-1
+  region: ${env:WORK_REGION}
+  stage: prod
 #  stage: dev
 
 # you can add statements to the Lambda function's IAM Role here
@@ -59,6 +60,8 @@ package:
 functions:
   hello:
     handler: aws-lambda-adapter.handler
+    events:
+      s3: ${env:WORK_BUCKET}
 
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events

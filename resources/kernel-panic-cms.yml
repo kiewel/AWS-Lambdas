@@ -1,0 +1,20 @@
+Resources:
+  S3BuckerCMS:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: kernel-panic-cms-bucket
+      # Set the CORS policy
+      CorsConfiguration:
+        CorsRules:
+          -
+            AllowedOrigins:
+              - '*'
+            AllowedHeaders:
+              - '*'
+            AllowedMethods:
+              - GET
+              - PUT
+              - POST
+              - DELETE
+              - HEAD
+            MaxAge: 3000

@@ -1,0 +1,5 @@
+Resources:
+  S3BucketMd:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: kernel-panic-md-bucket

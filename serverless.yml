@@ -1,0 +1,19 @@
+# serverless.yml
+
+service:
+  name: kernelPanic
+
+frameworkVersion: ">=1.0.0 <2.0.0"
+
+provider:
+  name: aws
+  stage: ${opt:stage, 'prod'} # Set the default stage used. Default is dev
+  region: ${opt:region, eu-central-1} # Overwrite the default region used. Default is us-east-1
+
+functions:
+
+# The "Resources" your "Functions" use.  Raw AWS CloudFormation goes in here.
+resources:
+  # Bucket CMS for Kernel Panic
+  ${file(resources/kernel-panic-cms.yml)}
+  ${file(resources/kernel-panic-md.yml)}
