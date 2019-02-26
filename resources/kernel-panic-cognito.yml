@@ -1,0 +1,123 @@
+
+Parameters:
+    BucketARN:
+        Type: String
+        Description: Enter ARN of the bucket you want to assign read permissions to
+        ConstraintDescription: "Value needs to like arn:aws:s3:::<bucket_name>"
+
+Resources:
+    # Cognito - User pool
+    CognitoUserPool:
+        Type: AWS::Cognito::UserPool
+        Properties:
+            UserPoolName: kernel_panic_user_pool
+            AdminCreateUserConfig:
+                AllowAdminCreateUserOnly: true
+                InviteMessageTemplate:
+                    EmailMessage: "Your username is {username} and temporary password is {####}. "
+                    EmailSubject: "Your temporary password"
+                UnusedAccountValidityDays: 30
+            AutoVerifiedAttributes: 
+              - email
+            AliasAttributes:
+              - email
+
+    # Cognito - Client
+    CognitoUserPoolClient:
+        Type: AWS::Cognito::UserPoolClient
+        Properties:
+            ClientName: kernel_panic_user_pool_client
+            UserPoolId: !Ref CognitoUserPool
+
+
+    # Cognito - Identity
+    CognitoIdentityPool:
+        Type: AWS::Cognito::IdentityPool
+        Properties:
+            IdentityPoolName: kernel_panic_identity_pool
+            AllowUnauthenticatedIdentities: false
+            CognitoIdentityProviders:
+              - ClientId: !Ref CognitoUserPoolClient
+                ProviderName:
+                    Fn::GetAtt: [CognitoUserPool, ProviderName]
+
+
+
+    # Cognito roles
+    CognitoIdentityPoolRoles:
+        Type: AWS::Cognito::IdentityPoolRoleAttachment
+        Properties:
+            IdentityPoolId: !Ref CognitoIdentityPool
+            Roles:
+                authenticated:
+                    Fn::GetAtt: [CognitoAuthRole, Arn]
+                unauthenticated:
+                    Fn::GetAtt: [CognitoUnauthRole, Arn]
+    CognitoAuthRole:
+        Type: AWS::IAM::Role
+        Properties:
+            RoleName: appAuthRole
+            Path: /
+            AssumeRolePolicyDocument:
+                Version: "2012-10-17"
+                Statement:
+                  - Effect: "Allow"
+                    Principal:
+                        Federated: "cognito-identity.amazonaws.com"
+                    Action: 
+                      - "sts:AssumeRoleWithWebIdentity"
+                    Condition:
+                        StringEquals:
+                                "cognito-identity.amazonaws.com:aud": !Ref CognitoIdentityPool
+                        "ForAnyValue:StringLike":
+                                "cognito-identity.amazonaws.com:amr": authenticated
+            Policies:
+              - PolicyName: "CognitoAuthorizedPolicy"
+                PolicyDocument:
+                    Version: "2012-10-17"
+                    Statement:
+                      - Effect: "Allow"
+                        Action:
+                          - "mobileanalytics:PutEvents"
+                          - "cognito-sync:*"
+                          - "cognito-identity:*"
+                        Resource: "*"
+                      - Effect: "Allow"
+                        Action:
+                          - "s3:GetObject"
+                          - "s3:ListBucket"
+                        Resource:
+                          - !Ref BucketARN
+                          - !Join
+                              - ''
+                              - - !Ref BucketARN
+                                - "/*"
+    CognitoUnauthRole:
+        Type: AWS::IAM::Role
+        Properties:
+            RoleName: appUnauthRole
+            Path: /
+            AssumeRolePolicyDocument:
+                Version: "2012-10-17"
+                Statement:
+                  - Effect: "Allow"
+                    Principal:
+                        Federated: "cognito-identity.amazonaws.com"
+                    Action:
+                      - "sts:AssumeRoleWithWebIdentity"
+                    Condition:
+                        StringEquals:
+                                "cognito-identity.amazonaws.com:aud": !Ref CognitoIdentityPool
+                        "ForAnyValue:StringLike":
+                                "cognito-identity.amazonaws.com:amr": unauthenticated
+            Policies:
+              - PolicyName: "CognitoUnauthorizedPolicy"
+                PolicyDocument:
+                    Version: "2012-10-17"
+                    Statement:
+                      - Effect: "Allow"
+                        Action:
+                          - "mobileanalytics:PutEvents"
+                          - "cognito-sync:*"
+                          - "cognito-identity:*"
+                        Resource: "*"
